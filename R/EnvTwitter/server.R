@@ -46,10 +46,9 @@ shinyServer(function(input, output) {
     }
     
     df <- read.csv(file)
-    df$normalized_frequency <- as.integer(df$normalized_frequency)
-    df <- df[order(-df$normalized_frequency),]
+    df$frequency <- as.integer(df$frequency)
+    df <- df[order(-df$frequency),]
     df <- head(df, 30)
-    df$frequency <- NULL
     df
   })
   
