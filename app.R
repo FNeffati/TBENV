@@ -41,7 +41,9 @@ server <- function(input, output, session){
     df$frequency <- as.integer(df$frequency)
     df <- df[order(-df$frequency),]
     df <- head(df, 30)
-    df
+
+    return(df)
+
   })
 
   tweets <- reactive({
@@ -84,26 +86,33 @@ server <- function(input, output, session){
 
     read_file <- read.csv(here(paste0('data/', file)))
     read_file$created_at.x <- ym(read_file$created_at.x)
-    read_file
+
+    return(read_file)
+
   })
 
   selected_county_name <- reactive({ input$fileOption })
   selected_year <- reactive({ input$timeFrame })
 
-  population <- reactive ({ fileOption <- input$fileOption
-  if (fileOption == "Pasco"){
-    residents <- '584,067'
-  }
-  else if (fileOption == "Tampa"){
-    residents <- '387,050'
-  }
-  else if (fileOption == "Sarasota"){
-    residents <- '54,764'
-  }
-  else if (fileOption == "Pinellas"){
-    residents <- '956,615'
-  }
+  population <- reactive ({
+    fileOption <- input$fileOption
+    if (fileOption == "Pasco"){
+      residents <- '584,067'
+    }
+    else if (fileOption == "Tampa"){
+      residents <- '387,050'
+    }
+    else if (fileOption == "Sarasota"){
+      residents <- '54,764'
+    }
+    else if (fileOption == "Pinellas"){
+      residents <- '956,615'
+    }
+
+    return(residents)
+
   })
+
   # --------------------------------------------------------------------------
 
 
@@ -119,7 +128,9 @@ server <- function(input, output, session){
     colnames(tweets_data) <- c("Popularity Weight", "Tweet Text", "Date")
 
     tweets_data <- tweets_data[!duplicated(tweets_data), ]
-    tweets_data
+
+    return(tweets_data)
+
   })
 
   output$tweets_table <- renderDT({
@@ -145,7 +156,9 @@ server <- function(input, output, session){
         'Date', 'color' = '#17BF63', 'font-weight' = 'bold',
         'font-size' = '14px',  'text-align' = 'left'
       )
+
     return(tab)
+
   })
   # --------------------------------------------------------------------------
 
@@ -185,7 +198,7 @@ server <- function(input, output, session){
   # --------------------------------------------------------------------------
   output$myplot1 <- renderWordcloud2({
     p1 <- wordcloud2(d1(), size=0.8, minRotation = -pi/6, maxRotation = -pi/6)
-    p1
+    return(p1)
   })
   output$print1  = renderPrint(input$myplot1_clicked_word)
   # --------------------------------------------------------------------------
@@ -206,7 +219,8 @@ server <- function(input, output, session){
                        max(data$frequency), "times. The word cloud provides a visual
                        representation of the relative frequencies of different
                        hashtags in the dataset.")
-    paragraph
+
+    return(paragraph)
 
   })
 
@@ -218,13 +232,15 @@ server <- function(input, output, session){
   filteredData <- reactive({
     year <-  input$timeFrame
     result <- sentiment_df() %>% filter(year(created_at.x) == year)
-    result
+
+    return(result)
+
   })
 
   output$sentimentPlot <- renderPlot({
     filtered_df <- filteredData()
     theme_set(theme_minimal())
-
+browser()
     plot <- ggplot(filtered_df, aes(x = created_at.x, y = Sentiment, color = Sentiment)) +
       geom_smooth(method = "loess", se = FALSE) +
       labs(title = "Sentiment Distribution",
@@ -241,7 +257,9 @@ server <- function(input, output, session){
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 12)
       )
-    plot
+
+    return(plot)
+
   })
 
   # --------------------------------------------------------------------------
@@ -280,7 +298,8 @@ server <- function(input, output, session){
                      - Number of Negative Sentiments: ", num_negative,"
                      ")
 
-    paragraph
+    return(paragraph)
+
   })
 
 }
