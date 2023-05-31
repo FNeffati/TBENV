@@ -12,11 +12,9 @@ library(lubridate)
 library(sp)
 library(here)
 
-# Load county data
-counties_geojson <- geojson_read("https://raw.githubusercontent.com/deldersveld/topojson/master/countries/us-states/FL-12-florida-counties.json", what = "sp")
+load(file = here('data/counties_geojson.RData'))
 sentiment_df <- read.csv(here("data/sentiment_output.csv"), stringsAsFactors = FALSE)
 sentiment_df$created_at.x <- ym(sentiment_df$created_at.x)
-
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session){
