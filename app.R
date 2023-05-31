@@ -240,16 +240,22 @@ server <- function(input, output, session){
   output$sentimentPlot <- renderPlot({
     filtered_df <- filteredData()
     theme_set(theme_minimal())
-browser()
-    plot <- ggplot(filtered_df, aes(x = created_at.x, y = Sentiment, color = Sentiment)) +
-      geom_smooth(method = "loess", se = FALSE) +
+
+    plot <- ggplot(filtered_df, aes(x = created_at.x, y = Sentiment, fill = Sentiment)) +
+      geom_hline(yintercept = 0, linetype = 'dashed') +
+      geom_point(color = 'darkgrey', size = 4, position = position_dodge2(width = 4), shape = 21) +
+      scale_fill_gradient2(low = 'red', high = 'green', midpoint = 0, limits = c(-1, 1)) +
+      scale_color_gradient2(low = 'red', high = 'green', midpoint = 0, limits = c(-1, 1)) +
+      geom_smooth(aes(color = ..y..), method = "loess", se = T, linewidth = 2, alpha = 0.2) +
+      scale_y_continuous(limits = c(-1, 1)) +
       labs(title = "Sentiment Distribution",
-           x = "Month",
+           x = NULL,
            y = "Sentiment",
            color = "Sentiment") +
       scale_x_date(date_labels = "%b", date_breaks = "month") +
       theme(
         plot.title = element_text(size = 18, face = "bold"),
+        panel.grid.minor = element_blank(),
         axis.title.x = element_text(size = 14),
         axis.title.y = element_text(size = 14),
         axis.text.x = element_text(size = 12),
