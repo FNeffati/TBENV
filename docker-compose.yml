@@ -1,0 +1,12 @@
+version: '3'
+services:
+  frontend:
+    image: my-react-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+  backend:
+    image: myflaskapp
+    ports:
+      - "5000:5000"

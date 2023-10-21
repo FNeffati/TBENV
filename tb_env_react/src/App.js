@@ -1,10 +1,10 @@
 import './App.css';
-
+import Cookie from "./components/cookie";
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-          Hopefully this updates
+          <Cookie />
       </header>
     </div>
   );
