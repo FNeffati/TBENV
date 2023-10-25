@@ -8,11 +8,14 @@ import "./styling/WordCloud.css"
 const WordCloud = () => {
 
     const [words, setWords] = useState([]);
+    const [rendered, setRendered] = useState(false)
+
     const fetchTerms = () => {
         fetch("http://127.0.0.1:5000/get_terms")
             .then((response) => response.json())
             .then((data) => {
                 setWords(data);
+                setRendered(true)
             })
             .catch((error) => {
                 console.error(error);
@@ -21,7 +24,7 @@ const WordCloud = () => {
 
     useEffect(() => {
         fetchTerms()
-    }, []);
+    }, [rendered]);
 
 
     useEffect(() => {
@@ -29,6 +32,7 @@ const WordCloud = () => {
                 const container = ".tagcloud";
                 const texts = words.map((word) => word.word);
                 const options = {radius: 300, maxSpeed: "slow", keep: true};
+                console.log(texts)
                 TagCloud(container, texts, options);
         }
     }, [words]);
