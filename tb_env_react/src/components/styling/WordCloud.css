@@ -1,0 +1,9 @@
+.all {
+
+    display: flex;
+    justify-content: center;
+    overflow: clip;
+
+    max-height: 550px;
+}
+

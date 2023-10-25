@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,600,600i');
+html,body{
+    font-family: 'Josefin Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+
+.landing_container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+}
+
+.leftSide{
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(to right, #ff390e, transparent);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    font-size: 24px;
+}
+
+.image-container {
+    width: 60%;
+    background-size: cover;
+}
+
+.image-container img {
+    -webkit-mask-image:-webkit-gradient(linear, right top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))
+}
+.tbayImage{
+    width: 100%;
+    height: 80%;
+    opacity: 100;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px;
+    margin: 0 auto;
+}
+
+.email-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-right-style:none;
+    border-radius: 5px 0 0 5px;
+    font-size: 15px;
+    color: #ffffff;
+    background: transparent;
+    width: 40%;
+}
+::placeholder {
+    color: white;
+    opacity: 1; /* Firefox */
+}
+
+.submit-button {
+    background: rgb(255, 255, 255); /* Transparent blue background */
+    color: #ff390e;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+}

@@ -1,10 +1,14 @@
 import './App.css';
-import Cookie from "./components/cookie";
+import Landing from "./components/landing";
+import Twitter from "./components/Twitter";
+
+
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-          <Cookie />
+          <Landing/>
+          <Twitter/>
       </header>
     </div>
   );

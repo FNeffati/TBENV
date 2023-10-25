@@ -1,0 +1,39 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: white;
+    text-effect: none;
+}
+
+.header_container {
+    background: linear-gradient(to left, #ff390e, transparent);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: white; /* Set logo color to white */
+}
+
+.links {
+    float: right;
+    margin: 10px;
+}
+.links a{
+    color: white;
+    text-decoration: none;
+    text-effect: none;
+    margin: 10px; /* Add spacing between links */
+}
+
+/* To prevent the link color from changing when clicked */
+.links a:hover {
+    color: #4d78d9;
+}
