@@ -9,7 +9,7 @@ header {
 }
 
 .header_container {
-    background: linear-gradient(to left, #ff390e, transparent);
+    background: linear-gradient(to left, #7C2855, transparent);
     display: flex;
     justify-content: space-between;
     align-items: center;

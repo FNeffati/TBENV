@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import TagCloud from "TagCloud"
 import "./styling/WordCloud.css"
+import ReactWordcloud from 'react-wordcloud';
 
 
 
@@ -26,27 +26,15 @@ const WordCloud = () => {
         fetchTerms()
     }, [rendered]);
 
-
-    useEffect(() => {
-        return () => {
-                const container = ".tagcloud";
-                const texts = words.map((word) => word.word);
-                const options = {radius: 300, maxSpeed: "slow", keep: true};
-                console.log(texts)
-                TagCloud(container, texts, options);
-        }
-    }, [words]);
-
-
-
-
-
     return (
 
         <div className="all">
-            <div className="tagcloud"></div>
+            <ReactWordcloud
+                words={words}
+            />
         </div>
     )
 };
 
 export default WordCloud
+

@@ -54,7 +54,12 @@ return (
                             filteredTweets.map((tweet) => (
                                 <div className="tweet">
                                     <div className="top">
-                                        <img src={tweet.image} alt={"#"} className="profile_image"/>
+                                        <img
+                                            src={tweet.image ? tweet.image : './styling/avatar.png'}
+                                            alt={"#"}
+                                            className="profile_image"
+                                        />
+
                                         <a className="username" href={"http://www.x.com/" + tweet.username}>@{tweet.username}</a>
                                     </div>
                                     <div className="tweet_mid">

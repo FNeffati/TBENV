@@ -45,7 +45,7 @@ def get_tweets():
 
 @app.route('/get_terms', methods=['GET'])
 def get_terms():
-    terms = None
+    terms = []
     file_path = 'geo_tags_RedTide_Pasco.csv'
 
     try:
@@ -55,8 +55,13 @@ def get_terms():
         data = None
 
     if data is not None:
-        terms = data.to_json(orient='records')
-
+        terms = [
+            {
+                'text': row['word'],
+                'value': int(row['frequency'])
+            }
+            for index, row in data.iterrows()
+        ]
     return terms
 
 
