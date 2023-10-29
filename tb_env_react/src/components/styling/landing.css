@@ -14,63 +14,34 @@ html,body{
     justify-content: center;
     align-items: center;
     gap: 10px;
-    height: 100%;
+    width: 100%;
+    margin-top: 100px;
+
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
 }
 
-.leftSide{
-    width: 40%;
+.left_side{
+    width: 33%;
     height: 100%;
     background: linear-gradient(to right, #7C2855, transparent);
     color: #fff;
     text-align: center;
-    padding: 20px;
     font-size: 24px;
 }
 
-.image-container {
-    width: 60%;
-    background-size: cover;
+.middle_side {
+    height: 100%;
+    width: 33%;
+
 }
 
-.image-container img {
-    -webkit-mask-image:-webkit-gradient(linear, right top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))
-}
-.tbayImage{
-    width: 100%;
-    height: 80%;
-    opacity: 100;
-}
-
-.container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 300px;
-    margin: 0 auto;
+.right_side {
+    height: 100%;
+    width: 33%;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
 }
 
-.email-input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-right-style:none;
-    border-radius: 5px 0 0 5px;
-    font-size: 15px;
-    color: #ffffff;
-    background: transparent;
-    width: 40%;
-}
-::placeholder {
-    color: white;
-    opacity: 1; /* Firefox */
-}
-
-.submit-button {
-    background: rgb(255, 255, 255); /* Transparent blue background */
-    color: #7C2855;
-    border: none;
-    border-radius: 0 5px 5px 0;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-}

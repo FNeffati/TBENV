@@ -1,7 +1,9 @@
 import React from 'react';
 import './styling/landing.css'
-import myImage from "./styling/tbaylanding.jpg"
 import Header from "./Header";
+import Twitter from "./Twitter";
+import WordCloud from "./WordCloud";
+import FloridaMap from "./FloridaMap";
 
 
 
@@ -12,18 +14,20 @@ function Landing () {
         <div>
             <Header/>
             <div className="landing_container">
-                <div className="leftSide">
-                    <h1>Tampa Bay Environmentalist</h1>
+                <div className="left_side">
+                     <Twitter/>
+                </div>
 
-                    <div className="email_container">
-                        <input type="email" className="email-input" placeholder="Join our news letter for the latest news."></input>
-                            <button className="submit-button">Submit</button>
+                <div className="middle_side">
+
+                    <div className="word_cloud_container">
+                        <WordCloud />
                     </div>
 
                 </div>
 
-                <div className="image-container">
-                    <img className="tbayImage" src={myImage} alt="" />
+                <div className="right_side">
+                    <FloridaMap/>
                 </div>
             </div>
         </div>

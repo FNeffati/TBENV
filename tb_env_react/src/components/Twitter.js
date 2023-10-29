@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import "./styling/Twitter.css"
-import WordCloud from "./WordCloud";
 
 function Twitter() {
     const [tweets, setTweets] = useState([]);
@@ -28,8 +27,6 @@ function Twitter() {
 
 return (
         <div className="Twitter_Section">
-            <div className="top">
-
                 <div className="tweets_header">
                     <button className="tweet_refresher" onClick={fetchTweets}>Refresh</button>
                     <input
@@ -39,12 +36,6 @@ return (
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                </div>
-
-                <div className="word_cloud_header">
-                    <h1>Word Cloud</h1>
-                </div>
-
             </div>
 
             <div className="mid">
@@ -53,9 +44,9 @@ return (
                         {Array.isArray(filteredTweets) && filteredTweets.length > 0 ? (
                             filteredTweets.map((tweet) => (
                                 <div className="tweet">
-                                    <div className="top">
+                                    <div className="tweet_top">
                                         <img
-                                            src={tweet.image ? tweet.image : './styling/avatar.png'}
+                                            src={tweet.image}
                                             alt={"#"}
                                             className="profile_image"
                                         />
@@ -76,10 +67,6 @@ return (
                             <li>No tweets available.</li>
                         )}
                     </ul>
-                </div>
-
-                <div className="word_cloud_container">
-                    <WordCloud />
                 </div>
 
             </div>

@@ -26,11 +26,22 @@ const WordCloud = () => {
         fetchTerms()
     }, [rendered]);
 
+    const options = {
+        rotations: 1,
+        rotationAngles: [0],
+        fontSizes: [15,70]
+    };
+    const size = [500, 600];
+
     return (
 
         <div className="all">
             <ReactWordcloud
                 words={words}
+                options={options}
+                size={size}
+                padding={0}
+
             />
         </div>
     )

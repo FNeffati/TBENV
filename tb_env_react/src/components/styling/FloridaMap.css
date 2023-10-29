@@ -1,0 +1,8 @@
+@import '~leaflet/dist/leaflet.css';
+
+
+.leaflet-pane,
+.leaflet-pane > svg{
+    position: relative;
+}
+
