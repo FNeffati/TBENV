@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import "./styling/Twitter.css"
 
-function Twitter() {
+function Twitter({timeFrame, County}) {
     const [tweets, setTweets] = useState([]);
-
     const fetchTweets = () => {
-        fetch('http://127.0.0.1:5000/get_tweets')
+        fetch('http://127.0.0.1:5000/get_tweets',
+            {
+                'method':'POST',
+                headers : {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify([timeFrame, County])
+            })
             .then((response) => response.json())
             .then((data) =>(
                 setTweets(data))
-
             )
             .catch((error) => console.error(error));
     };
 
     useEffect(() => {
         fetchTweets();
-    }, []);
+    }, [timeFrame, County]);
 
     const [searchTerm, setSearchTerm] = useState('');
 

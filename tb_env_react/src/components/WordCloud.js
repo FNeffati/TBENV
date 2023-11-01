@@ -5,16 +5,24 @@ import ReactWordcloud from 'react-wordcloud';
 
 
 
-const WordCloud = () => {
+const WordCloud = (cloud_type) => {
 
     const [words, setWords] = useState([]);
     const [rendered, setRendered] = useState(false)
 
     const fetchTerms = () => {
-        fetch("http://127.0.0.1:5000/get_terms")
+        fetch('http://127.0.0.1:5000/get_terms',
+            {
+                'method':'POST',
+                headers : {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify([cloud_type.cloud_type])
+            })
             .then((response) => response.json())
             .then((data) => {
                 setWords(data);
+                console.log(words)
                 setRendered(true)
             })
             .catch((error) => {
@@ -24,7 +32,7 @@ const WordCloud = () => {
 
     useEffect(() => {
         fetchTerms()
-    }, [rendered]);
+    }, [rendered, cloud_type.cloud_type]);
 
     const options = {
         rotations: 1,

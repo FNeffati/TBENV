@@ -23,7 +23,7 @@
 
 .tweet_refresher {
     background: rgb(255, 255, 255); /* Transparent blue background */
-    color: #ff390e;
+    color: #7C2855;
     border: none;
     border-radius: 5px 5px 5px 5px;
     cursor: pointer;
@@ -50,11 +50,10 @@ ul {
     max-height:550px;
 
     display: flex;
+    justify-content: center;
 
     overflow:scroll;
     overflow-x: auto;
-
-    justify-content: center;
 
 }
 

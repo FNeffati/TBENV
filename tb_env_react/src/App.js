@@ -1,5 +1,5 @@
 import './App.css';
-import Landing from "./components/landing";
+import Landing from "./components/Landing";
 
 function App() {
   return (
