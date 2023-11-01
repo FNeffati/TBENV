@@ -1,16 +1,9 @@
-import requests
-import pandas as pd
-import numpy as np
-import io
 import re
-from nltk.corpus import stopwords
 import collections
 from Locations import Locations
-import csv
 
 
 class Util:
-
     geo_tag_dict = collections.defaultdict(int)
     non_geo_hashtags_dict = collections.defaultdict(int)
     pure_locations = Locations().get_pure_locations("combined")
@@ -50,7 +43,6 @@ class Util:
 
             if not caught:
                 self.non_geo_hashtags_dict[word] += 1
-
 
     def filter_hashtags(self, tokenized_sentence):
         """
