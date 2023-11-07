@@ -20,10 +20,13 @@ function Landing () {
 
     const Time_Frame_Options = ["1 Day", "1 Week", "1 Month", "1 Year", "Custom"]
     const Word_Cloud_Options = ["Geo Tags", "Non-Geo Tags"]
+    const Account_Type_Options = ["Academic", "Government", "Media", "Other", "Tourism"]
 
     const [SelectedTimeFrame, setTimeFrame] = useState("")
     const [SelectedWordCloudOption, setWordCloudOption] = useState("")
+    const [SelectedAccountType, setAccountType] = useState("")
     const [SelectedCountyOption, setCountyOption] = useState("")
+
     const callback = (value, context) => {
         switch (context) {
             case "TimeFrame":
@@ -38,11 +41,14 @@ function Landing () {
                 setCountyOption(value)
                 console.log("County Option selected:", value);
                 break;
+            case "AccountTypeOption":
+                setAccountType(value)
+                console.log("Account Type Option selected:", value);
+                break;
             default:
                 break;
         }
     };
-
 
 
 
@@ -57,31 +63,41 @@ function Landing () {
                 />
                 <DropDown
                     callback={(value) => callback(value, "WordCloudOption")}
-                    title="Select Word Cloud Focus"
-                    options={Word_Cloud_Options}
+                    title="Select Account Type"
+                    options={Account_Type_Options}
                 />
+
                 <DropDown
                     callback={(value) => callback(value, "CountyOption")}
                     title="Select County"
                     options={County_Options}
                 />
-
             </div>
+
             <div className="landing_container">
                 <div className="left_side">
-                     <Twitter timeFrame={SelectedTimeFrame} County={SelectedCountyOption}/>
+                     <Twitter timeFrame={SelectedTimeFrame} County={SelectedCountyOption} selectedWordCloud={SelectedWordCloudOption}/>
                 </div>
+
 
                 <div className="middle_side">
 
+                    <div className="DropDown_container">
+                        <DropDown
+                            callback={(value) => callback(value, "WordCloudOption")}
+                            title="Select Word Cloud Focus"
+                            options={Word_Cloud_Options}
+                        />
+                    </div>
+
                     <div className="word_cloud_container">
-                        <WordCloud cloud_type={SelectedWordCloudOption} />
+                        <WordCloud cloud_type={SelectedWordCloudOption} timeFrame={SelectedTimeFrame} County={SelectedCountyOption} AccountType={SelectedAccountType}/>
                     </div>
 
                 </div>
 
                 <div className="right_side">
-                    <FloridaMap/>
+                    <FloridaMap userSelectedCounty={SelectedCountyOption}/>
                 </div>
             </div>
         </div>

@@ -1,17 +1,17 @@
 import re
 from util import Util
 import pandas as pd
+import json
+from flask import g
 from datetime import datetime, timedelta
 
 
 class Analysis:
-    current_tweets = []
 
     @staticmethod
     def preprocess_text_column(just_text_col):
         """
         :param just_text_col: Takes just the entire text column from the dataframe
-        :return: a tokenized and partially cleaned text column
         """
         tokenized_text_column = []
         for line in just_text_col:
@@ -44,8 +44,6 @@ class Analysis:
 
         self.preprocess_text_column(just_text_col)
 
-    current_tweets = []
-
     def get_filtered_tweets(self, time_frame=None, county=None):
         """
         We want this function to filter based on requested params
@@ -55,22 +53,22 @@ class Analysis:
         :return: a dataframe with those rows
         """
         # TODO: Change this into a Database situation
-        file_path = 'RedTide_Pasco_all_SIMPLE_columns.csv'
-
+        file_path = 'big_data.csv'
         filtered_data = None
-        selected_columns = ['text', 'created_at.x', 'username', 'profile_image_url', 'location']
-
         try:
-            data = pd.read_csv(file_path, usecols=selected_columns)
-            data.rename(columns={'created_at.x': 'time', 'profile_image_url': "image"}, inplace=True)
+            data = pd.read_csv(file_path, nrows=300)
+
         except FileNotFoundError:
-            print(f"File '{file_path}' not found.")
+            print(FileNotFoundError, "There has been an issue with the following file:", file_path)
             data = None
 
         if data is not None:
-            # Filter rows based on the provided time frame and county
-            if time_frame:
-                print(time_frame)
+            if county:
+                filtered_data = data[data['location'] == county]
+            else:
+                filtered_data = data  # Return everything if no filters are provided
+            """
+            elif time_frame:
 
                 # Calculate the upper bound (today's date)
                 upper_bound = datetime.now().date()  # Use .date() to get only year, month, and day
@@ -91,27 +89,34 @@ class Analysis:
 
                 # Convert the 'time' column to a datetime object with only year, month, and day
                 data['time'] = pd.to_datetime(data['time']).dt.date
-                filtered_data = data[(data['time'] >= lower_bound) & (data['time'] <= upper_bound)]
-            if county:
+                filtered_data = data[(data['time'] >= lower_bound) & (data['time'] <= upper_bound)]"""
 
-                filtered_data = data[data['location'] == county]
-            else:
-                filtered_data = data  # Return everything if no filters are provided
-
-        self.current_tweets = filtered_data
         return filtered_data
 
     # TODO: Need to map certain locations to certain Counties in the drop box
     # TODO: Need to remove the extra: Florida or FL from the location column
-    def get_key_words_frequency(self, type_of_cloud):
-        self.analyze_files(self.current_tweets)
+    def get_key_words_frequency(self, type_of_cloud, county):
 
-        geo_tag_dict = Util().geo_tag_dict
-        popular_hashtags_dict = Util().non_geo_hashtags_dict
+        prefix = "non_geo_"
+        suffix = "big_set.json"
 
-        # top_n_geo_hashtags = sorted(geo_tag_dict, key=geo_tag_dict.get, reverse=True)[:50]
-        # top_n_hashtags = sorted(popular_hashtags_dict, key=popular_hashtags_dict.get, reverse=True)[:50]
+        if type_of_cloud == "Non-Geo Tags":
+            prefix = "non_geo_"
         if type_of_cloud == "Geo Tags":
-            return geo_tag_dict
-        else:
-            return popular_hashtags_dict
+            prefix = "geo_"
+        if county == "Pasco":
+            suffix = "Pasco.json"
+        if county == "Hillsborough":
+            suffix = 'Hillsborough.json'
+        if county == "Pinellas":
+            suffix = 'Pinellas.json'
+        if county == "Manatee":
+            suffix = "Manatee.json"
+        if county == "Sarasota":
+            suffix = "Sarasota.json"
+
+        file = prefix + suffix
+        with open(file, 'r') as json_file:
+            terms = json.load(json_file)
+        return terms
+

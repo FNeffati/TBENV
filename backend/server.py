@@ -3,6 +3,8 @@ from flask import Flask, request, send_from_directory, jsonify
 from flask_cors import CORS
 import Analysis
 import json
+import pandas as pd
+from flask import g
 
 app = Flask(__name__, static_folder='../tb_env_react/build/')
 CORS(app)
@@ -46,23 +48,54 @@ def get_tweets():
 
 @app.route('/get_terms', methods=['POST'])
 def get_terms():
+    """
     request_body = request.get_json()
     type_of_cloud = request_body[0]
+    county = request_body[2]
     if type_of_cloud is None:
         type_of_cloud = "Non-Geo Tags"
 
     terms = []
 
     try:
-        data = analysis.get_key_words_frequency(type_of_cloud)
+        data_directory = './'
+        data = pd.DataFrame()
+
+        # Iterate through the files in the data directory.
+        for filename in os.listdir(data_directory):
+            if county in filename:
+                if "Non" in type_of_cloud and "non_geo" in filename:
+                    data = pd.read_csv(filename)
+                else:
+                    data = pd.read_csv(filename)
 
     except Exception as E:
         print(E, "COULDN'T GET TERMS FOR SOME REASON")
         data = None
 
+    print("###########################")
+    print(county, type_of_cloud)
+    print(data)
+
     if data is not None:
-        terms = [{'text': key, 'value': data[key]} for key in data]
-    return terms
+        # Convert the Series to a dictionary and then create the terms list
+        data_dict = data.to_dict()
+        terms = [{'text': key, 'value': data_dict[key]} for key in data_dict]
+
+    print()"""
+    request_body = request.get_json()
+    type_of_cloud = request_body[0]
+    county = request_body[2]
+
+    print()
+    print(type_of_cloud)
+    print()
+
+    if type_of_cloud is None:
+        type_of_cloud = "Non-Geo Tags"
+
+    result = analysis.get_key_words_frequency(type_of_cloud, county)
+    return result
 
 
 @app.route('/get_counties', methods=['GET'])
