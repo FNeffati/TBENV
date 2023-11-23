@@ -5,6 +5,7 @@ import re
 from util import Util
 from Analysis import Analysis
 import json
+
 """
 Read in files
 Calculate engagement per tweet
@@ -13,8 +14,7 @@ Order the file based on engagement
 Take the top 100 tweets
 Add them
 """
-
-"""
+"""total = 0
 data_frames = []
 directory_path = './'
 for filename in os.listdir(directory_path):
@@ -23,6 +23,12 @@ for filename in os.listdir(directory_path):
 
         # Read the CSV and selected desired columns
         data = pd.read_csv(file_path)
+        print("LENGTH OF CURRENT DATA FOR", filename,  len(data))
+
+        total =+ len(data)
+        labelled_accounts_df = pd.read_csv("finalized_8K_accounts_emojis_replaced.csv")
+        labelled_accounts_df = labelled_accounts_df[["hand.label", "username"]]
+        labelled_accounts_df.rename(columns={'hand.label': 'label'}, inplace=True)
         try:
             # calculating the 'engagement' metric
             engagement_columns = ['public_metrics.x_retweet_count', 'public_metrics.x_reply_count',
@@ -50,12 +56,17 @@ for filename in os.listdir(directory_path):
                 data['location'] = 'Manatee'
             elif 'Sarasota' in filename:
                 data['location'] = 'Sarasota'
+            
+            # TODO: Add a account type column
+            data = pd.merge(data, labelled_accounts_df, on='username', how='left')
+            data.fillna('No Label', inplace=True)
+
 
             # Order the DataFrame based on 'engagement'
             data = data.sort_values(by='engagement', ascending=False)
 
-            # Take the top 100 tweets
-            top_100_tweets = data.head(20)
+            # Take the top 200 tweets
+            top_100_tweets = data.head(100)
 
             data_frames.append(top_100_tweets)
         except Exception as E:
@@ -65,26 +76,118 @@ for filename in os.listdir(directory_path):
 big_data_frame = pd.concat(data_frames, ignore_index=True)
 big_data_frame.drop_duplicates(subset='text', keep='first', inplace=True)
 big_data_frame = big_data_frame.sample(frac=1).reset_index(drop=True)
-output_csv_path = 'big_data.csv'
-big_data_frame.to_csv(output_csv_path, index=False)
+
+import pymongo
+
+MONGO_URI = "mongodb+srv://Neffati:y4m4SKKmoIg6riCP@cluster0.h1xa7vw.mongodb.net/?retryWrites=true&w=majority"
+connection = pymongo.MongoClient(MONGO_URI)
+
+db = connection.tweets
+all_tweets = db.all_tweets
+
+all_tweets.insert_many(big_data_frame.to_dict('records'))
 """
 
+"""output_csv_path = 'big_data.csv'
+big_data_frame.to_csv(output_csv_path, index=False)
 
-files = [
-         "RedTide_Pinellas.StPete_all_SIMPLE_columns.csv", "RedTide_Sarasota_all_SIMPLE_columns.csv"
-         ]
-file_path = 'RedTide_Sarasota_all_SIMPLE_columns.csv'
+"""
+# print("TOTAL IS: ", total)
+# TODO: Take the Tweets from the big file that correspond to the input county
+#
+"""
+I have a csv file that has tweets and their corresponding county 
+I want a function that based on the input county, selects and return the rows with the corresponding county
 
-data = pd.read_csv(file_path, nrows=300)
+
+"""
+"""
+target_county = 'big_data'
+
+data = pd.read_csv('big_data.csv')
+
+# Filter the rows based on the target county
+filtered_data = data[data['location'] == target_county]
+print(len(filtered_data))
 Analysis().analyze_files(data)
 
-geo = Util().non_geo_hashtags_dict
-data = [{"text": key, "value": value} for key, value in geo.items()]
+non_geo = Util().non_geo_hashtags_dict
+non_geo_data = [{"text": key, "value": value} for key, value in non_geo.items()]
 
-file_name = "non_geo_Sarasota.json"
-
-# Open the file for writing and save the dictionary as JSON
+file_name = "non_geo_" + target_county + ".json"
 with open(file_name, 'w') as json_file:
-    json.dump(data, json_file)
+    json.dump(non_geo_data, json_file)"""
 
+"""
+geo = Util().geo_tag_dict
+geo_data = [{"text": key, "value": value} for key, value in geo.items()]
+
+file_name = "geo_" + target_county + ".json"
+with open(file_name, 'w') as json_file:
+    json.dump(geo_data, json_file)
+"""
+
+"""
+import pymongo
+
+MONGO_URI = "mongodb+srv://Neffati:y4m4SKKmoIg6riCP@cluster0.h1xa7vw.mongodb.net/?retryWrites=true&w=majority"
+connection = pymongo.MongoClient(MONGO_URI)
+
+db = connection.tags_frequency
+non_geo_tags = db.geo_tags
+
+type_of_cloud = "Geo Tags"
+county = "Sarasota"
+
+prefix = "non_geo_"
+suffix = "big_data.json"
+
+if type_of_cloud == "Non-Geo Tags":
+    prefix = "non_geo_"
+if type_of_cloud == "Geo Tags":
+    prefix = "geo_"
+
+if county == "Pasco":
+    suffix = "Pasco.json"
+if county == "Hillsborough":
+    suffix = 'Hillsborough.json'
+if county == "Pinellas":
+    suffix = 'Pinellas.json'
+if county == "Manatee":
+    suffix = "Manatee.json"
+if county == "Sarasota":
+    suffix = "Sarasota.json"
+
+file = prefix + suffix
+with open(file, 'r') as json_file:
+    terms = json.load(json_file)
+    current_file = {county: terms}
+    non_geo_tags.insert_one(current_file)"""
+
+
+
+"""from datetime import datetime
+
+import pymongo
+
+MONGO_URI = "mongodb+srv://Neffati:y4m4SKKmoIg6riCP@cluster0.h1xa7vw.mongodb.net/?retryWrites=true&w=majority"
+connection = pymongo.MongoClient(MONGO_URI)
+
+db = connection.tweets
+all_tweets = db.all_tweets
+
+
+# Define the format of your date string (e.g., 'YYYY-MM-DD')
+date_format = "%Y-%m-%d"  # Adjust this format to match your date strings
+
+# Iterate over each document
+for doc in all_tweets.find():
+    # Convert the date string to a datetime object
+    if 'time' in doc and isinstance(doc['time'], str):
+        try:
+            new_date = datetime.strptime(doc['time'], date_format)
+            # Update the document with the new datetime object
+            all_tweets.update_one({'_id': doc['_id']}, {'$set': {'time': new_date}})
+        except ValueError as e:
+            print(f"Error converting date for document {doc['_id']}: {e}")"""
 

@@ -1,16 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.3e9b174a.css",
-    "main.js": "/static/js/main.74ca2650.js",
+    "main.css": "/static/css/main.48ceb398.css",
+    "main.js": "/static/js/main.a4d6bd8c.js",
     "static/js/787.e00ac24a.chunk.js": "/static/js/787.e00ac24a.chunk.js",
-    "static/media/tbaylanding.jpg": "/static/media/tbaylanding.610610048d4ae643ea68.jpg",
     "index.html": "/index.html",
-    "main.3e9b174a.css.map": "/static/css/main.3e9b174a.css.map",
-    "main.74ca2650.js.map": "/static/js/main.74ca2650.js.map",
+    "main.48ceb398.css.map": "/static/css/main.48ceb398.css.map",
+    "main.a4d6bd8c.js.map": "/static/js/main.a4d6bd8c.js.map",
     "787.e00ac24a.chunk.js.map": "/static/js/787.e00ac24a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3e9b174a.css",
-    "static/js/main.74ca2650.js"
+    "static/css/main.48ceb398.css",
+    "static/js/main.a4d6bd8c.js"
   ]
 }

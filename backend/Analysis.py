@@ -1,9 +1,12 @@
 import re
+from datetime import datetime
+
+from bson import json_util
+
 from util import Util
 import pandas as pd
 import json
-from flask import g
-from datetime import datetime, timedelta
+import pymongo
 
 
 class Analysis:
@@ -44,7 +47,7 @@ class Analysis:
 
         self.preprocess_text_column(just_text_col)
 
-    def get_filtered_tweets(self, time_frame=None, county=None):
+    def get_filtered_tweets(self, time_frame=None, county=None, account_type=None):
         """
         We want this function to filter based on requested params
         :param time_frame: this either goes in increments of 1 Day, week, month, year
@@ -53,57 +56,67 @@ class Analysis:
         :return: a dataframe with those rows
         """
         # TODO: Change this into a Database situation
-        file_path = 'big_data.csv'
-        filtered_data = None
-        try:
-            data = pd.read_csv(file_path, nrows=300)
+        MONGO_URI = "mongodb+srv://Neffati:y4m4SKKmoIg6riCP@cluster0.h1xa7vw.mongodb.net/?retryWrites=true&w=majority"
+        connection = pymongo.MongoClient(MONGO_URI)
+        db = connection.tweets
+        tweets = db.all_tweets
+        query = {}
 
-        except FileNotFoundError:
-            print(FileNotFoundError, "There has been an issue with the following file:", file_path)
-            data = None
+        if county or account_type or time_frame:
+            if len(time_frame) == 2:
+                start_date_str, end_date_str = time_frame
 
-        if data is not None:
-            if county:
-                filtered_data = data[data['location'] == county]
-            else:
-                filtered_data = data  # Return everything if no filters are provided
-            """
-            elif time_frame:
+                # Convert strings to datetime objects
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
 
-                # Calculate the upper bound (today's date)
-                upper_bound = datetime.now().date()  # Use .date() to get only year, month, and day
-                lower_bound = upper_bound - timedelta(days=365)
-
-                # Calculate the lower bound based on the selected time frame
-                if time_frame == '1 day':
-                    lower_bound = upper_bound - timedelta(days=1)
-                elif time_frame == '1 week':
-                    lower_bound = upper_bound - timedelta(weeks=1)
-                elif time_frame == '1 month':
-                    lower_bound = upper_bound - timedelta(days=30)
-                elif time_frame == '1 year':
-                    lower_bound = upper_bound - timedelta(days=365)
+                print("Start Date:", start_date)
+                print("End Date:", end_date)
+                query = {
+                    'time': {'$gte': start_date, '$lt': end_date}
+                }
+            if account_type:
+                if account_type == "all":
+                    query = {}
                 else:
-                    # Handle invalid time_frame values here if needed
-                    print("Invalid time frame selected")
+                    query["label"] = account_type
+            if county:
+                query["location"] = county
+            cursor = tweets.find(query)
+        else:
+            cursor = tweets.find()
 
-                # Convert the 'time' column to a datetime object with only year, month, and day
-                data['time'] = pd.to_datetime(data['time']).dt.date
-                filtered_data = data[(data['time'] >= lower_bound) & (data['time'] <= upper_bound)]"""
+        results = []
+        for doc in cursor:
+            del doc["_id"]
+            json_string = json.dumps(doc, default=json_util.default)
+            results.append(json_string)
 
-        return filtered_data
+        print("------------------------------------------")
+        print("LENGTH:", len(results))
+        print("------------------------------------------")
+        json_array = '[' + ', '.join(results) + ']'
+        return json_array
 
-    # TODO: Need to map certain locations to certain Counties in the drop box
-    # TODO: Need to remove the extra: Florida or FL from the location column
     def get_key_words_frequency(self, type_of_cloud, county):
+        MONGO_URI = "mongodb+srv://Neffati:y4m4SKKmoIg6riCP@cluster0.h1xa7vw.mongodb.net/?retryWrites=true&w=majority"
+        connection = pymongo.MongoClient(MONGO_URI)
+        db = connection.tags_frequency
 
+        collection = db.non_geo_tags
         prefix = "non_geo_"
-        suffix = "big_set.json"
+        suffix = "big_data.json"
 
         if type_of_cloud == "Non-Geo Tags":
+            collection = db.non_geo_tags
             prefix = "non_geo_"
         if type_of_cloud == "Geo Tags":
+            collection = db.geo_tags
             prefix = "geo_"
+        if county == "All":
+            terms = collection.find_one({county: {"$exists": True}})[county]
+            return terms
+
         if county == "Pasco":
             suffix = "Pasco.json"
         if county == "Hillsborough":
@@ -116,7 +129,11 @@ class Analysis:
             suffix = "Sarasota.json"
 
         file = prefix + suffix
-        with open(file, 'r') as json_file:
-            terms = json.load(json_file)
+        try:
+            terms = collection.find_one({county: {"$exists": True}})[county]
+            print("Pulled successfully from the database.")
+        except Exception as e:
+            with open(file, 'r') as json_file:
+                print(e, "happened. So we're pulling from the files directly.")
+                terms = json.load(json_file)
         return terms
-

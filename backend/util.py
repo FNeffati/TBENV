@@ -1,12 +1,6 @@
-import requests
-import pandas as pd
-import numpy as np
-import io
 import re
-from nltk.corpus import stopwords
 import collections
 from Locations import Locations
-import csv
 
 
 class Util:
@@ -14,15 +8,6 @@ class Util:
     non_geo_hashtags_dict = collections.defaultdict(int)
     pure_locations = Locations().get_pure_locations("combined")
     categorized_locations = Locations().category_adder("combined")
-
-    def get_file_dataframe(self, url):
-        """
-        :param url: url for a specific CSV file (from the github repo)
-        :return: a dataframe of the downloaded csv file
-        """
-        download = requests.get(url).content
-        file_as_dataFrame = pd.read_csv(io.StringIO(download.decode('utf-8')), low_memory=False)
-        return file_as_dataFrame
 
     def extract_hashtags(self, sentence):
         result = []
@@ -77,16 +62,3 @@ class Util:
                 result.append(pure_word.lower())
 
         return result
-
-    def frequency_csv_creator(self, dictionary, file_path):
-        csv_path = file_path + ".csv"
-
-        data = [{"word": key, "frequency": value} for key, value in dictionary.items()]
-        header = data[0].keys()
-
-        with open(csv_path, 'w', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=header)
-            writer.writeheader()
-            writer.writerows(data)
-
-        print("Frequency CSV file has been created successfully.")

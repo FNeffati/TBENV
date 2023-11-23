@@ -1,15 +1,42 @@
 import os
+import pymongo
 from flask import Flask, request, send_from_directory, jsonify
 from flask_cors import CORS
 import Analysis
 import json
-import pandas as pd
-from flask import g
 
-app = Flask(__name__, static_folder='../tb_env_react/build/')
+app = Flask(__name__, static_folder='./build/')
 CORS(app)
 
+MONGO_URI = "mongodb+srv://Neffati:y4m4SKKmoIg6riCP@cluster0.h1xa7vw.mongodb.net/?retryWrites=true&w=majority"
+connection = pymongo.MongoClient(MONGO_URI)
+
 analysis = Analysis.Analysis()
+
+test_dic = {'message': 'hello world', 'college': 'ncf'}
+
+
+@app.route('/tryDB', methods=['GET'])
+def testdb():
+    print("TESTER")
+    try:
+        db = connection.test_database
+        insertions = db.insertions
+        """
+        db = connection.test_database
+        insertion = {
+            "author": "NCF",
+            "text": "My first insertion"
+        }
+        insertions = db.insertions
+        insertions.insert_one(insertion)
+        print("Pinged your deployment. You successfully connected to MongoDB!")
+        """
+        print(insertions.find_one({"author": "NCF"}))
+    except Exception as e:
+        print(e, "FAILED")
+
+    return "0"
 
 
 # Serve React App
@@ -33,63 +60,28 @@ def get_tweets():
 
     time_frame = None
     county = None
+    account_type = None
 
     try:
-        time_frame = request_body[0]
+        time_frame = request_body[0].split(' ')
         county = request_body[1]
+        account_type = request_body[2].lower()
+        if county == "All":
+            county = None
     except Exception as E:
         print(E, "Something went wrong with extracting time frame and county")
 
-    filtered_tweets = analysis.get_filtered_tweets(time_frame, county)
-    tweets = filtered_tweets.to_json(orient='records')
+    tweets = analysis.get_filtered_tweets(time_frame, county, account_type)
+    # tweets = json.loads(tweets)
 
     return tweets
 
 
 @app.route('/get_terms', methods=['POST'])
 def get_terms():
-    """
     request_body = request.get_json()
     type_of_cloud = request_body[0]
     county = request_body[2]
-    if type_of_cloud is None:
-        type_of_cloud = "Non-Geo Tags"
-
-    terms = []
-
-    try:
-        data_directory = './'
-        data = pd.DataFrame()
-
-        # Iterate through the files in the data directory.
-        for filename in os.listdir(data_directory):
-            if county in filename:
-                if "Non" in type_of_cloud and "non_geo" in filename:
-                    data = pd.read_csv(filename)
-                else:
-                    data = pd.read_csv(filename)
-
-    except Exception as E:
-        print(E, "COULDN'T GET TERMS FOR SOME REASON")
-        data = None
-
-    print("###########################")
-    print(county, type_of_cloud)
-    print(data)
-
-    if data is not None:
-        # Convert the Series to a dictionary and then create the terms list
-        data_dict = data.to_dict()
-        terms = [{'text': key, 'value': data_dict[key]} for key in data_dict]
-
-    print()"""
-    request_body = request.get_json()
-    type_of_cloud = request_body[0]
-    county = request_body[2]
-
-    print()
-    print(type_of_cloud)
-    print()
 
     if type_of_cloud is None:
         type_of_cloud = "Non-Geo Tags"
